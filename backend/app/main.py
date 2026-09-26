@@ -1,6 +1,8 @@
 import app.models  # noqa: F401
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
+from app.core.config import cors_origin_list
 from app.routers import analytics, auth, owners, payments, pets, practice, services, vaccinations, visits
 
 app = FastAPI(
@@ -8,6 +10,12 @@ app = FastAPI(
     summary="Multi-tenant veterinary practice management API",
     version="1.0.0",
     redirect_slashes=False,
+)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=cors_origin_list(),
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 API_PREFIX = "/api/v1"

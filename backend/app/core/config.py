@@ -14,6 +14,11 @@ class Settings(BaseSettings):
     jwt_secret: str = "change-me-to-a-long-random-string"
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 1440
+    cors_origins: str = "http://127.0.0.1:43123,http://localhost:43123"
+
+
+def cors_origin_list() -> list[str]:
+    return [item.strip() for item in settings.cors_origins.split(",") if item.strip()]
 
 
 @lru_cache
