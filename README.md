@@ -55,6 +55,32 @@ The owner can update the practice name, phone, and address. Staff can use the cl
 
 The seed clinic is Happy Paws Veterinary Clinic, with owners John, Maria, and David, pets Milo, Luna, and Rocky, and the services Consultation, Rabies Vaccination, Deworming, Wound Dressing, and Nail Clipping.
 
+## Frontend
+
+The clinic UI is a Vue 3 app in `frontend/`. It uses TypeScript, Vite, Vue Router, TanStack Query, and Tailwind. HTTP calls go through a client generated from the API’s OpenAPI schema. Do not edit `frontend/src/api/generated/schema.ts` by hand.
+
+Start the API first (see above), then:
+
+```bash
+cd frontend
+cp .env.example .env
+npm install
+npm run dev
+```
+
+Open http://127.0.0.1:43123. The API base URL is `VITE_API_BASE_URL` in `frontend/.env` (default `http://127.0.0.1:8000`). The API allows that dev origin through `CORS_ORIGINS`.
+
+Register does not return a token. The app stores the token from the login call it makes with the same email and password, then opens the dashboard. You can also sign in with the demo owner above.
+
+The practice payload has no currency. Amounts are shown as `Rs.` from one formatter.
+
+### Refresh the API client
+
+1. Start the backend so `http://127.0.0.1:8000/openapi.json` is available. Override the URL with `OPENAPI_URL` if needed.
+2. From `frontend/`, run `npm run generate:api`.
+3. `npm run type-check`
+4. `npm run build`
+
 ## Tests
 
 Tests use PostgreSQL, not SQLite, so the queries match the application. Create the database user from `docker compose`, or point `TEST_DATABASE_URL` at a database the tests may create and wipe.

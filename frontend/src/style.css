@@ -1,0 +1,51 @@
+@import "@fontsource/ibm-plex-sans/400.css";
+@import "@fontsource/ibm-plex-sans/500.css";
+@import "@fontsource/ibm-plex-sans/600.css";
+@import "@fontsource/ibm-plex-serif/500.css";
+@import "@fontsource/ibm-plex-serif/600.css";
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "IBM Plex Serif", Georgia, serif;
+  --color-ink: #1a2421;
+  --color-spruce: #14312c;
+  --color-paper: #f3f0ea;
+  --color-card: #fffcf8;
+  --color-line: #e3dbd0;
+  --color-muted: #5c675f;
+  --color-leaf: #1f7a5c;
+  --color-leaf-dark: #17624a;
+  --color-danger: #8d2c2c;
+  --color-warn: #8a5a12;
+  --color-ok: #1d6b45;
+  --color-ok-bg: #e7f4ec;
+  --color-warn-bg: #f8efd8;
+  --color-danger-bg: #f8e8e6;
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-leaf);
+    outline-offset: 2px;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+}
