@@ -1,0 +1,52 @@
+services:
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: pawlodge
+      POSTGRES_PASSWORD: pawlodge
+      POSTGRES_DB: pawlodge
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_pawlodge:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "pawlodge"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    command: /bin/sh -c "uvicorn app.main:app --host 0.0.0.0 --port 8000"
+
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://pawlodge:pawlodge@db:5432/pawlodge}
+      JWT_SECRET: ${JWT_SECRET:-change-me-to-a-long-random-string}
+      JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-1440}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://127.0.0.1:43123,http://localhost:43123,http://,http://localhost}
+
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+
+    environment:
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost/api/}
+
+    ports:
+      - 80:80
+
+    depends_on:
+      - backend
+volumes:
+  db_pawlodge:
