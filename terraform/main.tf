@@ -1,6 +1,6 @@
 
 data "aws_ssm_parameter" "al2023_ami" {
-  name = "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64"
+  name = "ami-01a395a37625fb28c"
 }
 
 resource "aws_iam_role" "instance_role" {
@@ -35,7 +35,7 @@ resource "aws_iam_instance_profile" "instance_role" {
 }
 
 resource "aws_instance" "app_instance" {
-  ami                         = "ami-01a395a37625fb28c"
+  ami                         = data.aws_ssm_parameter.al2023_ami.value
   instance_type               = var.app_instance_type
   subnet_id                   = aws_subnet.public_subnet_1.id
   vpc_security_group_ids      = [aws_security_group.app_sg.id]
