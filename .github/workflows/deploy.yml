@@ -144,13 +144,32 @@ jobs:
         with:
           terraform_wrapper: false
 
+      # Remote TFC execution cannot see GitHub OIDC AWS creds on this runner.
+      # Force local execution so the AWS provider uses the assumed role below.
+      - name: Set Terraform Cloud workspace to local execution
+        env:
+          TF_TOKEN_app_terraform_io: ${{ secrets.TF_TOKEN_APP_TERRAFORM_IO }}
+        run: |
+          set -euo pipefail
+          curl --fail-with-body \
+            --header "Authorization: Bearer ${TF_TOKEN_app_terraform_io}" \
+            --header "Content-Type: application/vnd.api+json" \
+            --request PATCH \
+            --data '{"data":{"type":"workspaces","attributes":{"execution-mode":"local"}}}' \
+            "https://app.terraform.io/api/v2/organizations/my-learning231/workspaces/paw-lodge"
+
       - name: Terraform init, apply, and capture outputs
         id: tf
         working-directory: terraform
         env:
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_TOKEN_APP_TERRAFORM_IO }}
+          AWS_REGION: ap-southeast-1
         run: |
           set -euo pipefail
+
+          # Confirm GHA OIDC creds are present for the AWS provider.
+          aws sts get-caller-identity
+
           terraform init
           terraform apply -auto-approve
 
