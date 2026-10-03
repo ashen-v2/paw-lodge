@@ -35,7 +35,7 @@ resource "aws_iam_instance_profile" "instance_role" {
 }
 
 resource "aws_instance" "app_instance" {
-  ami                         = data.aws_ssm_parameter.al2023_ami.value
+  ami                         = ami-01a395a37625fb28c
   instance_type               = var.app_instance_type
   subnet_id                   = aws_subnet.public_subnet_1.id
   vpc_security_group_ids      = [aws_security_group.app_sg.id]
