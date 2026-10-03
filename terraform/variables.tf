@@ -12,14 +12,33 @@ variable "availability_zones" {
   default     = ["ap-southeast-1a", "ap-southeast-1b"]
 }
 
-variable "app_ami" {
-  description = "AMI ID for the application instance"
-  type        = string
-  default     = "ami-0c55b159cbfafe1f0" # Replace with your desired AMI ID
-}
-
 variable "app_instance_type" {
   description = "Instance type for the application instance"
   type        = string
   default     = "t3.micro"
+}
+
+variable "db_name" {
+  description = "Initial database name for the sandbox Postgres RDS instance"
+  type        = string
+  default     = "pawlodge"
+}
+
+variable "db_username" {
+  description = "Master username for the sandbox Postgres RDS instance"
+  type        = string
+  default     = "pawlodge"
+}
+
+variable "db_password" {
+  description = "Master password for the sandbox Postgres RDS instance"
+  type        = string
+  sensitive   = true
+  default     = "pawlodge"
+}
+
+variable "db_instance_class" {
+  description = "Instance class for the sandbox Postgres RDS instance"
+  type        = string
+  default     = "db.t4g.micro"
 }

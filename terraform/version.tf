@@ -6,4 +6,13 @@ terraform {
     }
   }
   required_version = ">= 1.5.0"
+
+  cloud {
+    organization = "my-learning231"
+
+    workspaces {
+      name = "paw-lodge"
+    }
+  }
+
 }
