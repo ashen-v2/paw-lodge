@@ -111,3 +111,41 @@ secrets.json
 .DS_Store
 Thumbs.db
 ehthumbs.db
+
+# ==========================================
+# Git and GitHub
+# ==========================================
+.git
+.github
+.gitignore
+
+# ==========================================
+# Terraform
+# ==========================================
+# Docker requires wildcard formatting to catch nested plugin cache folders
+**/.terraform/
+**/.terraform*
+
+# Prevent local states or variable secrets from leaking into the container image
+**/*.tfstate
+**/*.tfstate.*
+**/*.tfvars
+**/*.tfvars.json
+**/crash.log
+
+# ==========================================
+# Environment & Configuration Caches
+# ==========================================
+.env
+.env.*
+docker.env
+.act/
+
+# ==========================================
+# Build Outputs & Documentation
+# ==========================================
+README.md
+LICENSE
+**/.vscode/
+**/.idea/
+**/.DS_Store

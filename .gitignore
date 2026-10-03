@@ -112,3 +112,50 @@ secrets.json
 Thumbs.db
 ehthumbs.db
 
+# ==========================================
+# Terraform
+# ==========================================
+# Local .terraform directory containing downloaded provider plugins and modules
+.terraform/
+
+# .tfstate files contain sensitive infrastructure resource details and secrets
+*.tfstate
+*.tfstate.*
+
+# Crash log files
+crash.log
+crash.*.log
+
+# Exclude all variable files since they often contain passwords, keys, and tokens
+*.tfvars
+*.tfvars.json
+
+# Ignore local override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# DO NOT ignore the dependency lock file (highly recommended to commit this)
+# !.terraform.lock.hcl
+
+# ==========================================
+# GitHub Actions & CI/CD
+# ==========================================
+# Local GitHub Actions runner simulations (e.g., act framework)
+.act/
+
+# Temporary environment or secret files sometimes used in local testing
+.env
+.env.*
+!.env.example
+docker.env
+
+# ==========================================
+# Operating System & IDEs
+# ==========================================
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
