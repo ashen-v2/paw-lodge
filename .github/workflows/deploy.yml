@@ -95,9 +95,21 @@ jobs:
             const claims = JSON.parse(Buffer.from(padded, 'base64').toString('utf8'))
             core.info(`OIDC sub=${claims.sub}`)
             core.info(`OIDC aud=${claims.aud}`)
+            if (claims.sub.includes('@')) {
+              core.warning(
+                'This repo emits IMMUTABLE OIDC subjects. Legacy trust values like ' +
+                'repo:ashen-v2/paw-lodge:... will NOT match. Update the IAM role trust ' +
+                'policy sub to the exact value above (includes @ownerId/@repoId).'
+              )
+            }
             core.info(
-              "IAM trust policy must allow this exact sub " +
-              "(with environment:prod it is NOT repo:...:ref:refs/heads/main)."
+              'Required IAM Condition example:\n' +
+              JSON.stringify({
+                StringEquals: {
+                  'token.actions.githubusercontent.com:aud': 'sts.amazonaws.com',
+                  'token.actions.githubusercontent.com:sub': claims.sub,
+                },
+              }, null, 2)
             )
 
       - name: Configure AWS credentials
