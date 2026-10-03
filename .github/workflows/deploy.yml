@@ -57,11 +57,57 @@ jobs:
     environment: prod
 
     steps:
+      - name: Verify prod ODIC_ROLE secret
+        env:
+          ODIC_ROLE: ${{ secrets.ODIC_ROLE }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${ODIC_ROLE}" ]; then
+            echo "::error::secrets.ODIC_ROLE is empty in the 'prod' environment."
+            echo "Add ODIC_ROLE as an Environment secret on Settings → Environments → prod"
+            echo "(not only as a Repository secret), or ensure the name matches exactly."
+            exit 1
+          fi
+
+          # Safe fingerprint only — never print the full secret value.
+          ROLE_LEN="${#ODIC_ROLE}"
+          ROLE_PREFIX="${ODIC_ROLE:0:20}"
+          ROLE_SUFFIX="${ODIC_ROLE: -12}"
+
+          echo "environment=prod"
+          echo "ODIC_ROLE length=${ROLE_LEN}"
+          echo "ODIC_ROLE prefix=${ROLE_PREFIX}..."
+          echo "ODIC_ROLE suffix=...${ROLE_SUFFIX}"
+
+          if [[ "${ODIC_ROLE}" != arn:aws:iam::*:role/* ]]; then
+            echo "::error::ODIC_ROLE does not look like an IAM role ARN (arn:aws:iam::<account>:role/<name>)."
+            exit 1
+          fi
+
+      - name: Show OIDC subject claim
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const token = await core.getIDToken('sts.amazonaws.com')
+            const payload = token.split('.')[1]
+            const padded = payload + '='.repeat((4 - (payload.length % 4)) % 4)
+            const claims = JSON.parse(Buffer.from(padded, 'base64').toString('utf8'))
+            core.info(`OIDC sub=${claims.sub}`)
+            core.info(`OIDC aud=${claims.aud}`)
+            core.info(
+              "IAM trust policy must allow this exact sub " +
+              "(with environment:prod it is NOT repo:...:ref:refs/heads/main)."
+            )
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.ODIC_ROLE }}
           aws-region: ap-southeast-1
+
+      - name: Verify AWS identity
+        run: aws sts get-caller-identity
 
   terraform:
     needs: aws-auth
