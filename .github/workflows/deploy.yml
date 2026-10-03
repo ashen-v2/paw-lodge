@@ -144,7 +144,7 @@ jobs:
         with:
           terraform_wrapper: false
 
-      - name: Terraform init and capture outputs
+      - name: Terraform init, apply, and capture outputs
         id: tf
         working-directory: terraform
         env:
@@ -152,6 +152,7 @@ jobs:
         run: |
           set -euo pipefail
           terraform init
+          terraform apply -auto-approve
 
           POSTGRES_URL="$(terraform output -raw postgres_url)"
           APP_INSTANCE_ID="$(terraform output -raw app_instance_id)"
